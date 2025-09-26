@@ -23,7 +23,7 @@ interface TmdbTvShow {
 
 export type TmdbContent = TmdbMovie | TmdbTvShow;
 
-interface TmdbSearchResponse {
+export interface TmdbSearchResponse {
   page: number;
   results: TmdbContent[];
   total_pages: number;

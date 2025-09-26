@@ -31,12 +31,31 @@ export function MovieCard({ item, onAddToWatchlist, onMarkAsWatched }: MovieCard
       </CardContent>
       <CardFooter className="flex gap-2 p-4 pt-0">
         {onAddToWatchlist && (
-          <Button variant="outline" size="sm" onClick={() => onAddToWatchlist(item)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              try {
+                onAddToWatchlist(item);
+              } catch (error) {
+                console.error("Error adding to watchlist:", error);
+              }
+            }}
+          >
             <PlusIcon className="h-4 w-4 mr-2" /> Watchlist
           </Button>
         )}
         {onMarkAsWatched && (
-          <Button size="sm" onClick={() => onMarkAsWatched(item)}>
+          <Button
+            size="sm"
+            onClick={() => {
+              try {
+                onMarkAsWatched(item);
+              } catch (error) {
+                console.error("Error marking as watched:", error);
+              }
+            }}
+          >
             <EyeIcon className="h-4 w-4 mr-2" /> Watched
           </Button>
         )}
