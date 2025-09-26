@@ -59,10 +59,8 @@ export const useMovieAppStore = create<MovieAppState>((set) => ({
     })),
   fetchWatched: async () => {
     // This will be implemented later with API calls
-    console.log("Fetching watched content...");
   },
   fetchWatchlist: async () => {
     // This will be implemented later with API calls
-    console.log("Fetching watchlist...");
   },
 }));

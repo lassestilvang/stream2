@@ -1,12 +1,12 @@
 import { SearchBar } from "@/components/SearchBar";
-import { auth } from "@/app/api/auth/[...nextauth]/route";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth();
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/register");
   }
 
   return (

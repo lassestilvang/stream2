@@ -30,13 +30,17 @@ interface TmdbSearchResponse {
   total_results: number;
 }
 
-export const searchTmdb = async (query: string): Promise<TmdbSearchResponse> => {
+export const searchTmdb = async (
+  query: string
+): Promise<TmdbSearchResponse> => {
   if (!query) {
     return { page: 1, results: [], total_pages: 0, total_results: 0 };
   }
 
   const response = await fetch(
-    `${TMDB_API_BASE_URL}/search/multi?query=${encodeURIComponent(query)}&api_key=${env.NEXT_PUBLIC_TMDB_API_KEY}`
+    `${TMDB_API_BASE_URL}/search/multi?query=${encodeURIComponent(
+      query
+    )}&api_key=${env.TMDB_API_KEY}`
   );
 
   if (!response.ok) {

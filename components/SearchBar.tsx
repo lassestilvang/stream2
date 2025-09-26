@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { searchTmdb, TmdbContent, getImageUrl } from "@/lib/tmdb";
+import { TmdbContent, getImageUrl } from "@/lib/tmdb";
 import Image from "next/image";
 import { useMovieAppStore } from "@/state/store";
 import { PlusIcon } from "lucide-react";
@@ -11,12 +11,19 @@ import { PlusIcon } from "lucide-react";
 export function SearchBar() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const { searchResults, setSearchResults, addWatchlistItem } = useMovieAppStore();
+  const { searchResults, setSearchResults, addWatchlistItem } =
+    useMovieAppStore();
 
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const data = await searchTmdb(query);
+      const response = await fetch(
+        `/api/tmdb/search?query=${encodeURIComponent(query)}`
+      );
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+      const data = await response.json();
       setSearchResults(data.results);
     } catch (error) {
       console.error("Error searching TMDB:", error);

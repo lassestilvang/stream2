@@ -18,9 +18,9 @@ export default function WatchedPage() {
     }
   };
 
-  const handleEdit = (item: WatchedItem) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleEdit = (_item: WatchedItem) => {
     // TODO: Implement edit functionality, maybe open a dialog
-    console.log("Edit item:", item);
   };
 
   return (

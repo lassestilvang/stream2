@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SearchBar } from '@/components/SearchBar';
-import { useMovieAppStore } from '@/state/store';
 
 // Mock the TMDB API search function
 jest.mock('@/lib/tmdb', () => ({
@@ -20,6 +19,10 @@ jest.mock('@/lib/tmdb', () => ({
   getImageUrl: jest.fn(() => '/placeholder-image.png'),
 }));
 
+beforeEach(() => {
+  fetchMock.resetMocks();
+});
+
 describe('SearchBar', () => {
   it('renders the search input and button', () => {
     render(<SearchBar />);
@@ -35,6 +38,15 @@ describe('SearchBar', () => {
   });
 
   it('displays search results after a search', async () => {
+    fetchMock.mockResponseOnce(JSON.stringify({
+      page: 1,
+      results: [
+        { id: 1, title: 'Test Movie', poster_path: null, release_date: '2023-01-01', overview: '...', media_type: 'movie' },
+      ],
+      total_pages: 1,
+      total_results: 1,
+    }));
+
     render(<SearchBar />);
     const input = screen.getByPlaceholderText('Search for movies or TV shows...');
     const searchButton = screen.getByRole('button', { name: /search/i });
