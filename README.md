@@ -32,7 +32,6 @@ Follow these instructions to set up and run the project locally.
 
 ```bash
 git clone https://github.com/your-username/my-movie-app.git
-cd my-movie-app
 ```
 
 ### 2. Install Dependencies
