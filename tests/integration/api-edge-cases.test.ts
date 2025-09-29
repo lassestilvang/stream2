@@ -26,7 +26,7 @@ jest.mock("@/lib/db", () => ({
   db: testDb,
 }));
 
-import { GET as tmdbSearchGet } from "@/app/api/tmdb/search";
+import { GET as tmdbSearchGet } from "@/app/api/tmdb/search/route";
 import { POST as registerPost } from "@/app/api/register/route";
 import { searchTmdb, TmdbSearchResponse } from "@/lib/tmdb";
 

@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TmdbContent, getImageUrl } from "@/lib/tmdb";
 import Image from "next/image";
 import { useMovieAppStore } from "@/state/store";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const { searchResults, setSearchResults, addWatchlistItem } =
+  const { searchResults, setSearchResults, addWatchlistItem, addWatchlistLoading, addWatchlistError } =
     useMovieAppStore();
 
   const handleSearch = async () => {
@@ -33,15 +34,24 @@ export function SearchBar() {
     }
   };
 
-  const handleAddToWatchlist = (item: TmdbContent) => {
-    addWatchlistItem({
-      id: Date.now(), // Temporary ID, will be replaced by DB ID
-      tmdbId: item.id,
-      title: "title" in item ? item.title : item.name,
-      posterPath: item.poster_path,
-      mediaType: item.media_type,
-    });
+  const handleAddToWatchlist = async (item: TmdbContent) => {
+    try {
+      await addWatchlistItem({
+        tmdbId: item.id,
+        title: "title" in item ? item.title : item.name,
+        posterPath: item.poster_path,
+        mediaType: item.media_type,
+      });
+    } catch (error) {
+      // Error is handled by the store and displayed via toast below
+    }
   };
+
+  useEffect(() => {
+    if (addWatchlistError) {
+      toast.error(`Failed to add to watchlist: ${addWatchlistError}`);
+    }
+  }, [addWatchlistError]);
 
   return (
     <div className="w-full max-w-xl mx-auto">
@@ -83,8 +93,14 @@ export function SearchBar() {
               size="sm"
               className="mt-auto"
               onClick={() => handleAddToWatchlist(item)}
+              disabled={addWatchlistLoading}
             >
-              <PlusIcon className="h-4 w-4 mr-2" /> Add to Watchlist
+              {addWatchlistLoading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <PlusIcon className="h-4 w-4 mr-2" />
+              )}
+              {addWatchlistLoading ? "Adding..." : "Add to Watchlist"}
             </Button>
           </div>
         ))}

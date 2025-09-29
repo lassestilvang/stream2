@@ -8,8 +8,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, XIcon } from "lucide-react";
-import { WatchlistItem } from "@/state/store";
+import { EyeIcon, XIcon, Loader2 } from "lucide-react";
+import { WatchlistItem, useMovieAppStore } from "@/state/store";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 interface WatchlistCardProps {
   item: WatchlistItem;
@@ -22,7 +24,46 @@ export function WatchlistCard({
   onMarkAsWatched,
   onRemoveFromWatchlist,
 }: WatchlistCardProps) {
+  const { removeWatchlistItem, addWatched, removeWatchlistLoading, removeWatchlistError } = useMovieAppStore();
   const mediaType = item.mediaType === "movie" ? "Movie" : "TV Show";
+
+  const handleRemove = async () => {
+    if (onRemoveFromWatchlist) {
+      onRemoveFromWatchlist(item.id);
+    } else {
+      try {
+        await removeWatchlistItem(item.id);
+      } catch (error) {
+        // Error handled by store
+      }
+    }
+  };
+
+  const handleMarkAsWatched = async () => {
+    if (onMarkAsWatched) {
+      onMarkAsWatched(item);
+    } else {
+      try {
+        addWatched({
+          id: Date.now(),
+          tmdbId: item.tmdbId,
+          title: item.title,
+          posterPath: item.posterPath,
+          mediaType: item.mediaType,
+          watchedAt: new Date(),
+        });
+        await removeWatchlistItem(item.id);
+      } catch (error) {
+        // Error handled by store
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (removeWatchlistError) {
+      toast.error(`Failed to remove from watchlist: ${removeWatchlistError}`);
+    }
+  }, [removeWatchlistError]);
 
   return (
     <Card className="flex flex-col h-full">
@@ -45,13 +86,8 @@ export function WatchlistCard({
         {onMarkAsWatched && (
           <Button
             size="sm"
-            onClick={() => {
-              try {
-                onMarkAsWatched(item);
-              } catch (error) {
-                console.error("Error marking as watched:", error);
-              }
-            }}
+            onClick={handleMarkAsWatched}
+            disabled={removeWatchlistLoading}
           >
             <EyeIcon className="h-4 w-4 mr-2" /> Watched
           </Button>
@@ -60,15 +96,15 @@ export function WatchlistCard({
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => {
-              try {
-                onRemoveFromWatchlist(item.id);
-              } catch (error) {
-                console.error("Error removing from watchlist:", error);
-              }
-            }}
+            onClick={handleRemove}
+            disabled={removeWatchlistLoading}
           >
-            <XIcon className="h-4 w-4 mr-2" /> Remove
+            {removeWatchlistLoading ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <XIcon className="h-4 w-4 mr-2" />
+            )}
+            {removeWatchlistLoading ? "Removing..." : "Remove"}
           </Button>
         )}
       </CardFooter>
