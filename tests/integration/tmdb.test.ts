@@ -1,4 +1,4 @@
-import { GET } from "@/app/api/tmdb/search";
+import { GET } from "@/app/api/tmdb/search/route";
 import { NextRequest } from "next/server";
 import { TmdbSearchResponse } from "@/lib/tmdb";
 
